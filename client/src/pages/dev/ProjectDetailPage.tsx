@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useLocation } from "wouter";
-import { ArrowLeft, AlertTriangle, Github, Users, Mail, Plus, Send } from "lucide-react";
+import { ArrowLeft, AlertTriangle, Github, Users, Mail, Plus, Send, Trash2, CheckCircle, PauseCircle, XCircle, Loader2, Search, Unlink, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -17,7 +17,8 @@ import { ScopeChangeCard } from "@/components/scope/ScopeChangeCard";
 import { QuoteForm } from "@/components/scope/QuoteForm";
 import { MessageThread } from "@/components/messages/MessageThread";
 import { FileList } from "@/components/files/FileList";
-import { useProject } from "@/hooks/useProjects";
+import { useProject, useUpdateProject, useDeleteProject } from "@/hooks/useProjects";
+import { useGitHubRepos, useConnectRepo, useDisconnectRepo } from "@/hooks/useGitHub";
 import { useReport, useReports, useUpdateReport } from "@/hooks/useReports";
 import { useInvoices, useMarkInvoicePaid, useDeleteInvoice } from "@/hooks/useInvoices";
 import { useScopeChanges, useSubmitQuote, useMarkScopeChangePaid } from "@/hooks/useScopeChanges";
@@ -85,6 +86,50 @@ export function ProjectDetailPage() {
   const markScopePaid = useMarkScopeChangePaid();
   const createFile = useCreateFile();
   const deleteFile = useDeleteFile();
+  const updateProject = useUpdateProject();
+  const deleteProject = useDeleteProject();
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [statusUpdating, setStatusUpdating] = useState(false);
+  const [showRepoPicker, setShowRepoPicker] = useState(false);
+  const [repoSearch, setRepoSearch] = useState("");
+
+  const { data: githubRepos, isLoading: reposLoading, error: reposError } = useGitHubRepos(
+    repoSearch || undefined,
+    showRepoPicker
+  );
+  const connectRepo = useConnectRepo();
+  const disconnectRepo = useDisconnectRepo();
+
+  const STATUS_TRANSITIONS: Record<string, string[]> = {
+    ACTIVE: ["PAUSED", "COMPLETED"],
+    PAUSED: ["ACTIVE", "COMPLETED"],
+    COMPLETED: [],
+  };
+
+  const handleStatusChange = async (newStatus: "ACTIVE" | "PAUSED" | "COMPLETED") => {
+    if (!project) return;
+    setStatusUpdating(true);
+    try {
+      await updateProject.mutateAsync({ id: project.id, data: { status: newStatus } });
+      toast({ title: `Project marked as ${newStatus.toLowerCase()}` });
+    } catch {
+      toast({ variant: "destructive", title: "Failed to update status" });
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
+
+  const handleDeleteProject = async () => {
+    if (!project) return;
+    try {
+      await deleteProject.mutateAsync(project.id);
+      navigate("/dashboard");
+      toast({ title: "Project deleted" });
+    } catch {
+      toast({ variant: "destructive", title: "Failed to delete project" });
+    }
+  };
 
   const reports = reportsData?.reports || [];
   const invoices = invoicesData?.invoices || [];
@@ -371,34 +416,190 @@ export function ProjectDetailPage() {
 
           {/* Settings */}
           <TabsContent value="settings" className="px-0 py-0 mt-0">
-            <div className="p-6 space-y-6">
-              <h2 className="font-semibold">Project Settings</h2>
+            <div className="p-6 max-w-xl space-y-6">
+              <h2 className="font-semibold text-base">Project Settings</h2>
 
-              <div>
-                <p className="text-sm font-medium mb-2">GitHub Repository</p>
+              {/* Status */}
+              <div className="bg-card border rounded-xl p-5 space-y-3">
+                <div>
+                  <p className="text-sm font-semibold mb-0.5">Project Status</p>
+                  <p className="text-xs text-muted-foreground">
+                    Manage the lifecycle state of this project.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge
+                    variant={project.status === "ACTIVE" ? "success" : project.status === "PAUSED" ? "warning" : "secondary"}
+                    className="text-xs px-2.5 py-1"
+                  >
+                    Current: {project.status}
+                  </Badge>
+                </div>
+                {project.status !== "COMPLETED" && (
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {(STATUS_TRANSITIONS[project.status] || []).map((s) => (
+                      <Button
+                        key={s}
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5 h-8 text-xs"
+                        disabled={statusUpdating}
+                        onClick={() => handleStatusChange(s as "ACTIVE" | "PAUSED" | "COMPLETED")}
+                      >
+                        {statusUpdating ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : s === "ACTIVE" ? (
+                          <CheckCircle className="h-3 w-3 text-green-500" />
+                        ) : s === "PAUSED" ? (
+                          <PauseCircle className="h-3 w-3 text-amber-500" />
+                        ) : (
+                          <XCircle className="h-3 w-3 text-muted-foreground" />
+                        )}
+                        Mark as {s.charAt(0) + s.slice(1).toLowerCase()}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+                {project.status === "COMPLETED" && (
+                  <p className="text-xs text-muted-foreground">Completed projects cannot change status.</p>
+                )}
+              </div>
+
+              {/* GitHub */}
+              <div className="bg-card border rounded-xl p-5 space-y-3">
+                <div>
+                  <p className="text-sm font-semibold mb-0.5">GitHub Repository</p>
+                  <p className="text-xs text-muted-foreground">
+                    Connect a repository to enable AI report generation.
+                  </p>
+                </div>
                 {hasGitHub ? (
-                  <div className="flex items-center gap-2">
-                    <Github className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-mono text-sm">{project.githubRepoFullName}</span>
-                    <Badge variant="success">Connected</Badge>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2.5 bg-muted/60 rounded-lg px-3 py-2.5">
+                      <Github className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <span className="font-mono text-sm flex-1 truncate">{project.githubRepoFullName}</span>
+                      <Badge variant="success" className="text-xs">Connected</Badge>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="gap-1.5 text-muted-foreground hover:text-destructive text-xs h-7"
+                      onClick={async () => {
+                        try {
+                          await disconnectRepo.mutateAsync(project.id);
+                          toast({ title: "Repository disconnected" });
+                        } catch {
+                          toast({ variant: "destructive", title: "Failed to disconnect" });
+                        }
+                      }}
+                      disabled={disconnectRepo.isPending}
+                    >
+                      {disconnectRepo.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Unlink className="h-3 w-3" />}
+                      Disconnect
+                    </Button>
+                  </div>
+                ) : showRepoPicker ? (
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                      <Input
+                        className="pl-8 h-8 text-sm"
+                        placeholder="Search repositories…"
+                        value={repoSearch}
+                        onChange={(e) => setRepoSearch(e.target.value)}
+                      />
+                    </div>
+                    {reposLoading && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground py-1">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading repositories…
+                      </div>
+                    )}
+                    {reposError && (
+                      <p className="text-xs text-destructive">
+                        GitHub not connected.{" "}
+                        <a href="/api/github/connect" className="underline">Connect GitHub first →</a>
+                      </p>
+                    )}
+                    {!reposLoading && !reposError && githubRepos && (
+                      <div className="max-h-48 overflow-y-auto rounded-lg border divide-y">
+                        {githubRepos.length === 0 && (
+                          <p className="text-xs text-muted-foreground px-3 py-4 text-center">No repositories found</p>
+                        )}
+                        {githubRepos.map((repo) => (
+                          <button
+                            key={repo.id}
+                            className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-muted/60 transition-colors text-left"
+                            onClick={async () => {
+                              try {
+                                await connectRepo.mutateAsync({ projectId: project.id, repoFullName: repo.full_name });
+                                setShowRepoPicker(false);
+                                setRepoSearch("");
+                                toast({ title: "Repository connected" });
+                              } catch {
+                                toast({ variant: "destructive", title: "Failed to connect repository" });
+                              }
+                            }}
+                            disabled={connectRepo.isPending}
+                          >
+                            <Github className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                            <span className="font-mono flex-1 truncate">{repo.full_name}</span>
+                            {repo.private && <Lock className="h-3 w-3 text-muted-foreground flex-shrink-0" />}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs h-7 text-muted-foreground"
+                      onClick={() => { setShowRepoPicker(false); setRepoSearch(""); }}
+                    >
+                      Cancel
+                    </Button>
                   </div>
                 ) : (
-                  <Button variant="outline" size="sm" className="gap-1.5" asChild>
-                    <a href="/api/github/connect">
-                      <Github className="h-4 w-4" /> Connect GitHub
-                    </a>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5"
+                    onClick={() => setShowRepoPicker(true)}
+                  >
+                    <Github className="h-4 w-4" /> Select Repository
                   </Button>
                 )}
               </div>
 
-              <div>
-                <p className="text-sm font-medium mb-1">Project ID</p>
-                <p className="text-xs font-mono text-muted-foreground bg-muted px-2 py-1.5 rounded w-fit">{project.id}</p>
+              {/* Meta */}
+              <div className="bg-card border rounded-xl p-5 space-y-3">
+                <p className="text-sm font-semibold">Project Info</p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Project ID</span>
+                    <span className="font-mono text-xs bg-muted px-2 py-1 rounded text-muted-foreground">{project.id.slice(0, 8)}…</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Created</span>
+                    <span className="text-xs">{formatDate(project.createdAt)}</span>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <p className="text-sm font-medium mb-1">Created</p>
-                <p className="text-sm text-muted-foreground">{formatDate(project.createdAt)}</p>
+              {/* Danger zone */}
+              <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-5 space-y-3">
+                <div>
+                  <p className="text-sm font-semibold text-destructive">Danger Zone</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Deleting a project is permanent and cannot be undone.
+                  </p>
+                </div>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="gap-1.5"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> Delete Project
+                </Button>
               </div>
             </div>
           </TabsContent>
@@ -434,6 +635,34 @@ export function ProjectDetailPage() {
           toast({ title: "Quote sent to client" });
         }}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Delete Project?</DialogTitle>
+          </DialogHeader>
+          <div className="py-2 space-y-3">
+            <p className="text-sm text-muted-foreground">
+              This will permanently delete <strong>{project?.name}</strong> and all associated data including reports, invoices, and messages. This cannot be undone.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              disabled={deleteProject.isPending}
+              onClick={handleDeleteProject}
+            >
+              {deleteProject.isPending ? (
+                <><Loader2 className="h-4 w-4 animate-spin mr-2" />Deleting…</>
+              ) : (
+                <><Trash2 className="h-4 w-4 mr-2" />Delete Project</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Invite Client Dialog */}
       <Dialog open={showInviteModal} onOpenChange={() => setShowInviteModal(false)}>

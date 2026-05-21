@@ -88,46 +88,45 @@ export function OnboardingChecklist() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
               >
-                <Link href={step.href}>
-                  <a
+                <Link
+                  href={step.href}
+                  className={cn(
+                    "flex items-center gap-3 p-3 rounded-md transition-colors group",
+                    done
+                      ? "opacity-60 pointer-events-none"
+                      : "hover:bg-accent cursor-pointer"
+                  )}
+                >
+                  <div
                     className={cn(
-                      "flex items-center gap-3 p-3 rounded-md transition-colors group",
+                      "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center border-2",
                       done
-                        ? "opacity-60"
-                        : "hover:bg-accent cursor-pointer"
+                        ? "bg-green-500 border-green-500 text-white"
+                        : "border-muted-foreground/30"
                     )}
                   >
-                    <div
+                    {done ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p
                       className={cn(
-                        "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center border-2",
-                        done
-                          ? "bg-green-500 border-green-500 text-white"
-                          : "border-muted-foreground/30"
+                        "text-sm font-medium",
+                        done && "line-through text-muted-foreground"
                       )}
                     >
-                      {done ? (
-                        <Check className="h-4 w-4" />
-                      ) : (
-                        <Icon className="h-3.5 w-3.5 text-muted-foreground" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p
-                        className={cn(
-                          "text-sm font-medium",
-                          done && "line-through text-muted-foreground"
-                        )}
-                      >
-                        {step.title}
-                      </p>
-                      <p className={cn("text-xs text-muted-foreground", done && "line-through")}>
-                        {step.description}
-                      </p>
-                    </div>
-                    {!done && (
-                      <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    )}
-                  </a>
+                      {step.title}
+                    </p>
+                    <p className={cn("text-xs text-muted-foreground", done && "line-through")}>
+                      {step.description}
+                    </p>
+                  </div>
+                  {!done && (
+                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  )}
                 </Link>
               </motion.div>
             );

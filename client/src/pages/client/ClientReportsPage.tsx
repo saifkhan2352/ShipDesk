@@ -11,10 +11,11 @@ export function ClientReportsPage() {
 
   return (
     <div>
-      <Link href={`/projects/${id}`}>
-        <a className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
-          <ArrowLeft className="h-4 w-4" /> Back
-        </a>
+      <Link
+        href={`/projects/${id}`}
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
+      >
+        <ArrowLeft className="h-4 w-4" /> Back
       </Link>
       <h1 className="text-xl font-bold mb-6">Project Updates</h1>
 
@@ -25,8 +26,8 @@ export function ClientReportsPage() {
       ) : (
         <div className="space-y-3">
           {(reports || []).map((r) => (
-            <Link key={r.id} href={`/projects/${id}/reports/${r.id}`}>
-              <a><ReportCard report={r} /></a>
+            <Link key={r.id} href={`/projects/${id}/reports/${r.id}`} className="block">
+              <ReportCard report={r} />
             </Link>
           ))}
         </div>

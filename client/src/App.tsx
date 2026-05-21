@@ -84,12 +84,12 @@ function DevApp() {
         <Route path="/" component={LandingPage} />
         <Route path="/sign-in">
           <div className="min-h-screen flex items-center justify-center bg-background">
-            <SignIn routing="path" path="/sign-in" afterSignInUrl="/dashboard" />
+            <SignIn routing="path" path="/sign-in" fallbackRedirectUrl="/dashboard" />
           </div>
         </Route>
         <Route path="/sign-up">
           <div className="min-h-screen flex items-center justify-center bg-background">
-            <SignUp routing="path" path="/sign-up" afterSignUpUrl="/onboarding" />
+            <SignUp routing="path" path="/sign-up" fallbackRedirectUrl="/onboarding" />
           </div>
         </Route>
         <Route path="/onboarding" component={OnboardingPage} />

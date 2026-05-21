@@ -10,7 +10,12 @@ import { useWorkspace, useUpdateWorkspace } from "@/hooks/useWorkspace";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 
-export function WorkspaceSettingsForm() {
+interface WorkspaceSettingsFormProps {
+  showBranding?: boolean;
+  showBrandingOnly?: boolean;
+}
+
+export function WorkspaceSettingsForm({ showBranding = true, showBrandingOnly = false }: WorkspaceSettingsFormProps) {
   const { data: workspace, isLoading } = useWorkspace();
   const updateWorkspace = useUpdateWorkspace();
 
@@ -93,66 +98,70 @@ export function WorkspaceSettingsForm() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>General</CardTitle>
-          <CardDescription>Your workspace name and portal subdomain.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="ws-name">Workspace Name *</Label>
-            <Input
-              id="ws-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              maxLength={60}
-              placeholder="My Dev Studio"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="ws-agency">Agency Name</Label>
-            <Input
-              id="ws-agency"
-              value={agencyName}
-              onChange={(e) => setAgencyName(e.target.value)}
-              placeholder="Shown to clients in the portal"
-              maxLength={80}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Portal URL</Label>
-            <div className="flex items-center gap-2">
+      {!showBrandingOnly && (
+        <Card>
+          <CardHeader>
+            <CardTitle>General</CardTitle>
+            <CardDescription>Your workspace name and portal subdomain.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="ws-name">Workspace Name *</Label>
               <Input
-                value={workspace?.slug ? `${workspace.slug}.portal.shipdesk.io` : ""}
-                readOnly
-                className="font-mono bg-muted text-sm"
+                id="ws-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                maxLength={60}
+                placeholder="My Dev Studio"
               />
-              <Button variant="outline" size="icon" onClick={handleCopySlug} className="flex-shrink-0">
-                {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-              </Button>
             </div>
-            <p className="text-xs text-muted-foreground">Subdomain is permanent and cannot be changed.</p>
-          </div>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Branding</CardTitle>
-          <CardDescription>Customize how your portal looks to clients.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <BrandingEditor
-            logoUrl={logoUrl}
-            primaryColor={primaryColor}
-            onLogoChange={handleLogoUpload}
-            onColorChange={setPrimaryColor}
-            uploadingLogo={uploadingLogo}
-          />
-        </CardContent>
-      </Card>
+            <div className="space-y-2">
+              <Label htmlFor="ws-agency">Agency Name</Label>
+              <Input
+                id="ws-agency"
+                value={agencyName}
+                onChange={(e) => setAgencyName(e.target.value)}
+                placeholder="Shown to clients in the portal"
+                maxLength={80}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Portal URL</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  value={workspace?.slug ? `${workspace.slug}.portal.shipdesk.io` : ""}
+                  readOnly
+                  className="font-mono bg-muted text-sm"
+                />
+                <Button variant="outline" size="icon" onClick={handleCopySlug} className="flex-shrink-0">
+                  {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">Subdomain is permanent and cannot be changed.</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {(showBranding || showBrandingOnly) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Branding</CardTitle>
+            <CardDescription>Customize how your portal looks to clients.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <BrandingEditor
+              logoUrl={logoUrl}
+              primaryColor={primaryColor}
+              onLogoChange={handleLogoUpload}
+              onColorChange={setPrimaryColor}
+              uploadingLogo={uploadingLogo}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       <Button
         onClick={handleSave}

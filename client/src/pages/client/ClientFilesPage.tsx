@@ -47,10 +47,11 @@ export function ClientFilesPage() {
 
   return (
     <div>
-      <Link href={`/projects/${id}`}>
-        <a className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4">
-          <ArrowLeft className="h-4 w-4" /> Back
-        </a>
+      <Link
+        href={`/projects/${id}`}
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4"
+      >
+        <ArrowLeft className="h-4 w-4" /> Back
       </Link>
       <h1 className="text-xl font-bold mb-6">Files</h1>
       <FileList

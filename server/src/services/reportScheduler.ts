@@ -68,6 +68,20 @@ export async function generateReportsForAllProjects(): Promise<void> {
   }
 }
 
+export async function markOverdueInvoices(): Promise<void> {
+  const now = new Date();
+  const result = await db.invoice.updateMany({
+    where: {
+      status: "UNPAID",
+      dueDate: { lt: now },
+    },
+    data: { status: "OVERDUE" },
+  });
+  if (result.count > 0) {
+    console.log(`Marked ${result.count} invoice(s) as OVERDUE`);
+  }
+}
+
 export function startScheduler(): void {
   cron.schedule(
     "0 9 * * 5",
@@ -77,7 +91,17 @@ export function startScheduler(): void {
     },
     { timezone: "UTC" }
   );
-  console.log("Report scheduler started — runs every Friday at 09:00 UTC");
+
+  cron.schedule(
+    "0 0 * * *",
+    () => {
+      console.log("Running overdue invoice check...");
+      markOverdueInvoices().catch(console.error);
+    },
+    { timezone: "UTC" }
+  );
+
+  console.log("Schedulers started — reports: Fridays 09:00 UTC, overdue check: daily 00:00 UTC");
 }
 
 export async function notifyClientsOfPublishedReport(

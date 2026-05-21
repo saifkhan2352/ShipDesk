@@ -23,10 +23,11 @@ export function ClientReportViewerPage() {
   if (!report) {
     return (
       <div>
-        <Link href={`/projects/${id}/reports`}>
-          <a className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4">
-            <ArrowLeft className="h-4 w-4" /> Back to Reports
-          </a>
+        <Link
+          href={`/projects/${id}/reports`}
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4"
+        >
+          <ArrowLeft className="h-4 w-4" /> Back to Reports
         </Link>
         <p className="text-muted-foreground">Report not found.</p>
       </div>
@@ -37,10 +38,11 @@ export function ClientReportViewerPage() {
 
   return (
     <div>
-      <Link href={`/projects/${id}/reports`}>
-        <a className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4">
-          <ArrowLeft className="h-4 w-4" /> Back to Reports
-        </a>
+      <Link
+        href={`/projects/${id}/reports`}
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4"
+      >
+        <ArrowLeft className="h-4 w-4" /> Back to Reports
       </Link>
 
       <h1 className="text-xl font-bold mb-1">{report.title}</h1>

@@ -86,10 +86,11 @@ export function ClientProjectPage() {
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-1">
               Latest Update
             </p>
-            <Link href={`/projects/${id}/reports/${latestReport.id}`}>
-              <a className="font-medium text-sm hover:text-primary transition-colors">
-                {latestReport.title}
-              </a>
+            <Link
+              href={`/projects/${id}/reports/${latestReport.id}`}
+              className="font-medium text-sm hover:text-primary transition-colors"
+            >
+              {latestReport.title}
             </Link>
             <p className="text-xs text-muted-foreground mt-1">
               {formatRelative(latestReport.publishedAt || latestReport.generatedAt)}
@@ -102,28 +103,26 @@ export function ClientProjectPage() {
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           return (
-            <Link key={item.href} href={item.href}>
-              <a>
-                <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Icon className="h-5 w-5 text-primary" />
+            <Link key={item.href} href={item.href} className="block">
+              <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                <CardContent className="p-4 flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm">{item.label}</span>
+                      {item.count !== undefined && item.count > 0 && (
+                        <Badge variant={(item.badge as "warning" | undefined) || "secondary"} className="text-xs">
+                          {item.count}
+                        </Badge>
+                      )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm">{item.label}</span>
-                        {item.count !== undefined && item.count > 0 && (
-                          <Badge variant={(item.badge as "warning" | undefined) || "secondary"} className="text-xs">
-                            {item.count}
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </CardContent>
-                </Card>
-              </a>
+                    <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </CardContent>
+              </Card>
             </Link>
           );
         })}

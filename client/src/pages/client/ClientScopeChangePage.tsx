@@ -43,10 +43,11 @@ export function ClientScopeChangePage() {
 
   return (
     <div>
-      <Link href={`/projects/${id}`}>
-        <a className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4">
-          <ArrowLeft className="h-4 w-4" /> Back
-        </a>
+      <Link
+        href={`/projects/${id}`}
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4"
+      >
+        <ArrowLeft className="h-4 w-4" /> Back
       </Link>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold">Change Requests</h1>
