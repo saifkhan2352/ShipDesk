@@ -27,3 +27,4 @@ shipdesk/
 ├── client/   # React frontend → Vercel
 └── server/   # Express backend → Railway
 ```
+# ShipDesk
