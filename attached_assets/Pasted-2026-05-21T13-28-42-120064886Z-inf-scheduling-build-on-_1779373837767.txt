@@ -1,0 +1,188 @@
+2026-05-21T13:28:42.120064886Z [inf]  scheduling build on Metal builder "builder-bkliao"
+2026-05-21T13:28:43.947930489Z [inf]  unpacking archive
+2026-05-21T13:28:44.040818467Z [inf]  uploading snapshot
+2026-05-21T13:28:44.085094929Z [inf]  using build driver nixpacks-v1.41.0
+2026-05-21T13:28:44.272811859Z [inf]  
+2026-05-21T13:28:44.272820071Z [inf]  ╔══════════════════════════════ Nixpacks v1.41.0 ══════════════════════════════╗
+2026-05-21T13:28:44.272822645Z [inf]  ║ setup      │ nodejs_18, npm-9_x, openssl                                     ║
+2026-05-21T13:28:44.272824848Z [inf]  ║──────────────────────────────────────────────────────────────────────────────║
+2026-05-21T13:28:44.272825820Z [inf]  ║ install    │ npm ci                                                          ║
+2026-05-21T13:28:44.272827312Z [inf]  ║──────────────────────────────────────────────────────────────────────────────║
+2026-05-21T13:28:44.272828103Z [inf]  ║ build      │ cd server && npm install && npx prisma generate && npx prisma   ║
+2026-05-21T13:28:44.272829205Z [inf]  ║            │ migrate deploy && npm run build                                 ║
+2026-05-21T13:28:44.272830557Z [inf]  ║──────────────────────────────────────────────────────────────────────────────║
+2026-05-21T13:28:44.272831308Z [inf]  ║ start      │ cd server && node dist/index.js                                 ║
+2026-05-21T13:28:44.272832680Z [inf]  ╚══════════════════════════════════════════════════════════════════════════════╝
+2026-05-21T13:28:44.272833341Z [inf]  
+2026-05-21T13:28:44.276674003Z [inf]  
+2026-05-21T13:28:44.276677869Z [inf]  Saved output to:
+2026-05-21T13:28:44.276680223Z [inf]    snapshot-target-unpack
+2026-05-21T13:28:44.397391517Z [inf]  [internal] load build definition from Dockerfile
+2026-05-21T13:28:44.397405037Z [inf]  [internal] load build definition from Dockerfile
+2026-05-21T13:28:44.397524527Z [inf]  [internal] load build definition from Dockerfile
+2026-05-21T13:28:44.758650998Z [inf]  [internal] load build definition from Dockerfile
+2026-05-21T13:28:44.960376196Z [inf]  [internal] load metadata for ghcr.io/railwayapp/nixpacks:ubuntu-1745885067
+2026-05-21T13:28:45.693353400Z [inf]  [internal] load metadata for ghcr.io/railwayapp/nixpacks:ubuntu-1745885067
+2026-05-21T13:28:45.694018087Z [inf]  [internal] load .dockerignore
+2026-05-21T13:28:45.694151737Z [inf]  [internal] load .dockerignore
+2026-05-21T13:28:45.694272919Z [inf]  [internal] load .dockerignore
+2026-05-21T13:28:48.439089574Z [inf]  [internal] load .dockerignore
+2026-05-21T13:28:48.675888967Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "AES_ENCRYPTION_KEY") (line 11)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.675892312Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "CLERK_SECRET_KEY") (line 11)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.675892652Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "CLERK_WEBHOOK_SECRET") (line 11)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.675893463Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "CLOUDINARY_API_KEY") (line 11)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.675894264Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "CLOUDINARY_API_SECRET") (line 11)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.675895056Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "GEMINI_API_KEY") (line 11)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.675895666Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "GITHUB_CLIENT_SECRET") (line 11)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.675897029Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "GITHUB_WEBHOOK_SECRET") (line 11)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.675923438Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "RESEND_API_KEY") (line 11)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.676611521Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "AES_ENCRYPTION_KEY") (line 12)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.676614035Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "CLERK_SECRET_KEY") (line 12)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.676614736Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "CLERK_WEBHOOK_SECRET") (line 12)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.676615136Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "CLOUDINARY_API_KEY") (line 12)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.676620725Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "CLOUDINARY_API_SECRET") (line 12)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.676622076Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "GEMINI_API_KEY") (line 12)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.676622397Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "GITHUB_CLIENT_SECRET") (line 12)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.676622928Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "GITHUB_WEBHOOK_SECRET") (line 12)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.676701315Z [wrn]  SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "RESEND_API_KEY") (line 12)(https://docs.docker.com/go/dockerfile/rule/secrets-used-in-arg-or-env/)
+ details: Sensitive data should not be used in the ARG or ENV commands
+
+2026-05-21T13:28:48.676702116Z [wrn]  UndefinedVar: Usage of undefined variable '$NIXPACKS_PATH' (line 18)(https://docs.docker.com/go/dockerfile/rule/undefined-var/)
+ details: Variables should be defined before their use
+
+2026-05-21T13:28:48.681108979Z [inf]  [stage-0  9/10] RUN printf '\nPATH=/app/node_modules/.bin:$PATH' >> /root/.profile
+2026-05-21T13:28:48.681111192Z [inf]  [stage-0  8/10] RUN --mount=type=cache,id=s/dc53eafd-575c-453c-b0d0-2a0a0c03ab27-node_modules/cache,target=/app/node_modules/.cache cd server && npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+2026-05-21T13:28:48.681111482Z [inf]  [stage-0  7/10] COPY . /app/.
+2026-05-21T13:28:48.681111893Z [inf]  [stage-0  6/10] RUN --mount=type=cache,id=s/dc53eafd-575c-453c-b0d0-2a0a0c03ab27-/root/npm,target=/root/.npm npm ci
+2026-05-21T13:28:48.681112524Z [inf]  [stage-0  5/10] COPY . /app/.
+2026-05-21T13:28:48.681112764Z [inf]  [stage-0  4/10] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
+2026-05-21T13:28:48.681112975Z [inf]  [stage-0  3/10] COPY .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix
+2026-05-21T13:28:48.681113195Z [inf]  [internal] load build context
+2026-05-21T13:28:48.681113586Z [inf]  [stage-0  2/10] WORKDIR /app/
+2026-05-21T13:28:48.681114056Z [inf]  [stage-0  1/10] FROM ghcr.io/railwayapp/nixpacks:ubuntu-1745885067@sha256:d45c89d80e13d7ad0fd555b5130f22a866d9dd10e861f589932303ef2314c7de
+2026-05-21T13:28:48.681114267Z [inf]  [stage-0  1/10] FROM ghcr.io/railwayapp/nixpacks:ubuntu-1745885067@sha256:d45c89d80e13d7ad0fd555b5130f22a866d9dd10e861f589932303ef2314c7de
+2026-05-21T13:28:48.681283481Z [inf]  [stage-0 10/10] COPY . /app
+2026-05-21T13:28:48.681291122Z [inf]  [internal] load build context
+2026-05-21T13:28:48.700112561Z [inf]  [internal] load build context
+2026-05-21T13:28:49.954368679Z [inf]  [internal] load build context
+2026-05-21T13:28:50.924927139Z [inf]  [stage-0  2/10] WORKDIR /app/
+2026-05-21T13:28:50.924927710Z [inf]  [stage-0  3/10] COPY .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix
+2026-05-21T13:28:50.924928250Z [inf]  [stage-0  4/10] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
+2026-05-21T13:28:51.076251465Z [inf]  [stage-0  4/10] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
+2026-05-21T13:28:51.076258535Z [inf]  [stage-0  5/10] COPY . /app/.
+2026-05-21T13:28:53.146973022Z [inf]  [stage-0  5/10] COPY . /app/.
+2026-05-21T13:28:53.329464881Z [inf]  [stage-0  6/10] RUN --mount=type=cache,id=s/dc53eafd-575c-453c-b0d0-2a0a0c03ab27-/root/npm,target=/root/.npm npm ci
+2026-05-21T13:28:56.802641593Z [inf]  npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@google/genai@2.5.0',
+npm warn EBADENGINE   required: { node: '>=20.0.0' },
+npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+npm warn EBADENGINE }
+
+2026-05-21T13:28:56.803207642Z [inf]  npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@lemonsqueezy/lemonsqueezy.js@3.3.1',
+npm warn EBADENGINE   required: { node: '>=20' },
+npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+npm warn EBADENGINE }
+
+2026-05-21T13:28:59.179912294Z [inf]  npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+
+2026-05-21T13:28:59.319957968Z [inf]  npm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+
+2026-05-21T13:28:59.394692389Z [inf]  npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+2026-05-21T13:29:04.420766898Z [inf]  
+added 478 packages, and audited 481 packages in 8s
+
+
+2026-05-21T13:29:04.420803903Z [inf]  156 packages are looking for funding
+  run `npm fund` for details
+
+2026-05-21T13:29:04.422029703Z [inf]  
+found 0 vulnerabilities
+
+2026-05-21T13:29:06.422683591Z [inf]  [stage-0  6/10] RUN --mount=type=cache,id=s/dc53eafd-575c-453c-b0d0-2a0a0c03ab27-/root/npm,target=/root/.npm npm ci
+2026-05-21T13:29:06.596603960Z [inf]  [stage-0  7/10] COPY . /app/.
+2026-05-21T13:29:36.892290849Z [inf]  [stage-0  7/10] COPY . /app/.
+2026-05-21T13:29:39.023884358Z [inf]  [stage-0  8/10] RUN --mount=type=cache,id=s/dc53eafd-575c-453c-b0d0-2a0a0c03ab27-node_modules/cache,target=/app/node_modules/.cache cd server && npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+2026-05-21T13:29:48.405627254Z [inf]  npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@google/genai@2.5.0',
+npm warn EBADENGINE   required: { node: '>=20.0.0' },
+npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+npm warn EBADENGINE }
+
+2026-05-21T13:29:48.406462707Z [inf]  npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@lemonsqueezy/lemonsqueezy.js@3.3.1',
+npm warn EBADENGINE   required: { node: '>=20' },
+npm warn EBADENGINE   current: { node: 'v18.20.5', npm: '10.8.2' }
+npm warn EBADENGINE }
+
+2026-05-21T13:29:50.074144636Z [inf]  
+up to date, audited 481 packages in 2s
+
+2026-05-21T13:29:50.074389634Z [inf]  
+156 packages are looking for funding
+
+2026-05-21T13:29:50.074419809Z [inf]    run `npm fund` for details
+
+2026-05-21T13:29:50.077803636Z [inf]  
+found 0 vulnerabilities
+
+2026-05-21T13:29:51.594591174Z [inf]  Prisma schema loaded from prisma/schema.prisma
+
+2026-05-21T13:29:55.194571321Z [inf]  
+✔ Generated Prisma Client (v5.22.0) to ./../node_modules/@prisma/client in 1.09s
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+
+2026-05-21T13:29:56.386389747Z [inf]  Prisma schema loaded from prisma/schema.prisma
+
+2026-05-21T13:29:56.392846555Z [inf]  Datasource "db": PostgreSQL database "neondb", schema "public" at "ep-jolly-voice-aq6ilf1i-pooler.c-8.us-east-1.aws.neon.tech"
+
+2026-05-21T13:29:57.895058043Z [inf]  
+No migration found in prisma/migrations
+
+
+2026-05-21T13:29:58.91288883Z [inf]  Error: P3005
+
+The database schema is not empty. Read more about how to baseline an existing production database: https://pris.ly/d/migrate-baseline
+
+
+2026-05-21T13:30:37.198778377Z [err]  [stage-0  8/10] RUN --mount=type=cache,id=s/dc53eafd-575c-453c-b0d0-2a0a0c03ab27-node_modules/cache,target=/app/node_modules/.cache cd server && npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+2026-05-21T13:30:37.523577213Z [err]  Build Failed: build daemon returned an error < failed to solve: process "/bin/bash -ol pipefail -c cd server && npm install && npx prisma generate && npx prisma migrate deploy && npm run build" did not complete successfully: exit code: 1 >
