@@ -23,7 +23,14 @@ const app = express();
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   /^https:\/\/[a-z0-9-]+\.portal\.shipdesk\.io$/,
-  ...(process.env.NODE_ENV === "development" ? ["http://localhost:5173", "http://localhost:5174"] : []),
+  ...(process.env.NODE_ENV === "development"
+    ? [
+        "http://localhost:5000",
+        "http://localhost:5173",
+        "http://localhost:5174",
+        process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : undefined,
+      ]
+    : []),
 ].filter(Boolean) as (string | RegExp)[];
 
 app.use(
