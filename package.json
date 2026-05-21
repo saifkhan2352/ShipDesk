@@ -11,6 +11,9 @@
     "build": "npm run build --workspace=client && npm run build --workspace=server",
     "lint": "npm run lint --workspace=client && npm run lint --workspace=server"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
