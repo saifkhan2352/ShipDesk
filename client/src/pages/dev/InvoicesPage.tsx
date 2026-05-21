@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { InvoiceCard } from "@/components/invoices/InvoiceCard";
+import { InvoiceForm } from "@/components/invoices/InvoiceForm";
 import { useInvoices, useMarkInvoicePaid, useDeleteInvoice } from "@/hooks/useInvoices";
 import { toast } from "@/hooks/use-toast";
 
@@ -11,6 +11,7 @@ const STATUS_TABS = ["all", "UNPAID", "PAID", "OVERDUE"] as const;
 
 export function InvoicesPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [showCreate, setShowCreate] = useState(false);
 
   const { data, isLoading } = useInvoices(
     undefined,
@@ -25,6 +26,10 @@ export function InvoicesPage() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Invoices</h1>
+        <Button className="gap-2" onClick={() => setShowCreate(true)}>
+          <Plus className="h-4 w-4" />
+          New Invoice
+        </Button>
       </div>
 
       <div className="flex gap-2 mb-6 flex-wrap">
@@ -48,8 +53,15 @@ export function InvoicesPage() {
           {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-28" />)}
         </div>
       ) : invoices.length === 0 ? (
-        <div className="text-center py-20 text-muted-foreground text-sm">
-          No invoices found.
+        <div className="text-center py-20">
+          <p className="text-muted-foreground text-sm">
+            {statusFilter === "all" ? "No invoices yet. Create one to get started." : `No ${statusFilter.toLowerCase()} invoices.`}
+          </p>
+          {statusFilter === "all" && (
+            <Button variant="outline" className="mt-4 gap-2" onClick={() => setShowCreate(true)}>
+              <Plus className="h-4 w-4" /> Create your first invoice
+            </Button>
+          )}
         </div>
       ) : (
         <div className="space-y-3">
@@ -69,6 +81,11 @@ export function InvoicesPage() {
           ))}
         </div>
       )}
+
+      <InvoiceForm
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+      />
     </div>
   );
 }

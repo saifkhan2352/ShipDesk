@@ -1,7 +1,14 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = process.env.EMAIL_FROM || "noreply@shipdesk.io";
+
+function getResend(): Resend {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    throw new Error("RESEND_API_KEY is not set — email sending is disabled");
+  }
+  return new Resend(key);
+}
 
 export async function sendMagicLink(opts: {
   to: string;
@@ -12,7 +19,7 @@ export async function sendMagicLink(opts: {
 }): Promise<void> {
   const name = opts.clientName || "there";
   const sender = opts.agencyName || opts.workspaceName;
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM,
     to: opts.to,
     subject: `Your portal access link from ${sender}`,
@@ -35,7 +42,7 @@ export async function sendReportPublished(opts: {
 }): Promise<void> {
   const name = opts.clientName || "there";
   const sender = opts.agencyName || "Your developer";
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM,
     to: opts.to,
     subject: `New project update: ${opts.reportTitle}`,
@@ -68,7 +75,7 @@ export async function sendScopeChangeNotification(opts: {
     approved: `The scope change request for ${opts.projectName} has been approved.`,
     declined: `The scope change request for ${opts.projectName} has been declined.`,
   };
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM,
     to: opts.to,
     subject: subjectMap[opts.type],
@@ -87,7 +94,7 @@ export async function sendMessageNotification(opts: {
   senderName: string;
   portalUrl: string;
 }): Promise<void> {
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM,
     to: opts.to,
     subject: `New message on ${opts.projectName}`,
@@ -113,7 +120,7 @@ export async function sendInvoiceNotification(opts: {
     style: "currency",
     currency: opts.currency,
   }).format(opts.amount);
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM,
     to: opts.to,
     subject: `Invoice from ${sender}: ${opts.invoiceTitle}`,

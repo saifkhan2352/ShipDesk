@@ -56,6 +56,15 @@ function DevApp() {
   const { isLoaded, isSignedIn } = useAuth();
   const [location, navigate] = useLocation();
 
+  const publicRoutes = ["/", "/sign-in", "/sign-up"];
+  const isPublic = publicRoutes.includes(location);
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn && !isPublic) {
+      navigate("/sign-in");
+    }
+  }, [isLoaded, isSignedIn, isPublic, navigate]);
+
   if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -64,11 +73,7 @@ function DevApp() {
     );
   }
 
-  const publicRoutes = ["/", "/sign-in", "/sign-up"];
-  const isPublic = publicRoutes.includes(location);
-
   if (!isSignedIn && !isPublic) {
-    navigate("/sign-in");
     return null;
   }
 
