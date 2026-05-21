@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyToken } from "@clerk/backend";
+import { verifyToken, createClerkClient } from "@clerk/backend";
 import { db } from "../lib/prisma.js";
 import { AppError } from "../lib/errors.js";
 
@@ -8,6 +8,10 @@ export interface AuthRequest extends Request {
   clerkUserId?: string;
   workspaceId?: string;
 }
+
+const clerkClient = createClerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY,
+});
 
 export async function requireAuth(
   req: AuthRequest,
@@ -29,9 +33,31 @@ export async function requireAuth(
       throw new AppError("Invalid token", 401, "UNAUTHORIZED");
     }
 
-    const user = await db.user.findUnique({ where: { clerkId: clerkUserId } });
+    let user = await db.user.findUnique({ where: { clerkId: clerkUserId } });
+
     if (!user) {
-      throw new AppError("User not found", 401, "UNAUTHORIZED");
+      const clerkUser = await clerkClient.users.getUser(clerkUserId);
+      const primaryEmail = clerkUser.emailAddresses.find(
+        (e) => e.id === clerkUser.primaryEmailAddressId
+      );
+      const email =
+        primaryEmail?.emailAddress ||
+        clerkUser.emailAddresses[0]?.emailAddress ||
+        "";
+      const name =
+        [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ") ||
+        email;
+
+      user = await db.user.upsert({
+        where: { clerkId: clerkUserId },
+        update: { email, name, avatarUrl: clerkUser.imageUrl || null },
+        create: {
+          clerkId: clerkUserId,
+          email,
+          name,
+          avatarUrl: clerkUser.imageUrl || null,
+        },
+      });
     }
 
     req.userId = user.id;
