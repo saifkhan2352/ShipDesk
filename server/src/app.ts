@@ -25,6 +25,8 @@ app.set("trust proxy", 1);
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   /^https:\/\/[a-z0-9-]+\.portal\.shipdesk\.io$/,
+  /^https:\/\/[a-z0-9-]+\.replit\.dev$/,
+  /^https:\/\/[a-z0-9-]+\.repl\.co$/,
   ...(process.env.NODE_ENV === "development"
     ? [
         "http://localhost:5000",
