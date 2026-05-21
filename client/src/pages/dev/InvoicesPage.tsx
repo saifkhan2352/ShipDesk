@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Receipt } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { InvoiceCard } from "@/components/invoices/InvoiceCard";
@@ -7,7 +8,12 @@ import { InvoiceForm } from "@/components/invoices/InvoiceForm";
 import { useInvoices, useMarkInvoicePaid, useDeleteInvoice } from "@/hooks/useInvoices";
 import { toast } from "@/hooks/use-toast";
 
-const STATUS_TABS = ["all", "UNPAID", "PAID", "OVERDUE"] as const;
+const STATUS_TABS = [
+  { key: "all", label: "All" },
+  { key: "UNPAID", label: "Unpaid" },
+  { key: "PAID", label: "Paid" },
+  { key: "OVERDUE", label: "Overdue" },
+] as const;
 
 export function InvoicesPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -25,67 +31,82 @@ export function InvoicesPage() {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Invoices</h1>
-        <Button className="gap-2" onClick={() => setShowCreate(true)}>
+        <div>
+          <h1 className="text-xl font-bold">Invoices</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            {isLoading ? "Loading…" : `${invoices.length} invoice${invoices.length !== 1 ? "s" : ""}`}
+          </p>
+        </div>
+        <Button className="gap-1.5" size="sm" onClick={() => setShowCreate(true)}>
           <Plus className="h-4 w-4" />
           New Invoice
         </Button>
       </div>
 
-      <div className="flex gap-2 mb-6 flex-wrap">
+      <div className="flex gap-1.5 mb-6 flex-wrap">
         {STATUS_TABS.map((tab) => (
           <button
-            key={tab}
-            onClick={() => setStatusFilter(tab)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              statusFilter === tab
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
+            key={tab.key}
+            onClick={() => setStatusFilter(tab.key)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+              statusFilter === tab.key
+                ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                : "bg-card text-muted-foreground border-border hover:bg-accent hover:text-foreground"
             }`}
           >
-            {tab === "all" ? "All" : tab.charAt(0) + tab.slice(1).toLowerCase()}
+            {tab.label}
           </button>
         ))}
       </div>
 
       {isLoading ? (
         <div className="space-y-3">
-          {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-28" />)}
+          {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)}
         </div>
       ) : invoices.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="text-muted-foreground text-sm">
-            {statusFilter === "all" ? "No invoices yet. Create one to get started." : `No ${statusFilter.toLowerCase()} invoices.`}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center py-20 bg-muted/30 rounded-xl border border-dashed"
+        >
+          <Receipt className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+          <p className="text-muted-foreground text-sm mb-4">
+            {statusFilter === "all"
+              ? "No invoices yet. Create one to get started."
+              : `No ${statusFilter.toLowerCase()} invoices.`}
           </p>
           {statusFilter === "all" && (
-            <Button variant="outline" className="mt-4 gap-2" onClick={() => setShowCreate(true)}>
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setShowCreate(true)}>
               <Plus className="h-4 w-4" /> Create your first invoice
             </Button>
           )}
-        </div>
+        </motion.div>
       ) : (
         <div className="space-y-3">
-          {invoices.map((inv) => (
-            <InvoiceCard
+          {invoices.map((inv, i) => (
+            <motion.div
               key={inv.id}
-              invoice={inv}
-              onMarkPaid={(id) => {
-                markPaid.mutate(id);
-                toast({ title: "Marked as paid" });
-              }}
-              onDelete={(id) => {
-                deleteInvoice.mutate(id);
-                toast({ title: "Invoice deleted" });
-              }}
-            />
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04 }}
+            >
+              <InvoiceCard
+                invoice={inv}
+                onMarkPaid={(id) => {
+                  markPaid.mutate(id);
+                  toast({ title: "Marked as paid" });
+                }}
+                onDelete={(id) => {
+                  deleteInvoice.mutate(id);
+                  toast({ title: "Invoice deleted" });
+                }}
+              />
+            </motion.div>
           ))}
         </div>
       )}
 
-      <InvoiceForm
-        open={showCreate}
-        onClose={() => setShowCreate(false)}
-      />
+      <InvoiceForm open={showCreate} onClose={() => setShowCreate(false)} />
     </div>
   );
 }

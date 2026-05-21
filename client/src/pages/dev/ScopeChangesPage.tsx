@@ -1,12 +1,21 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { GitMerge } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScopeChangeCard } from "@/components/scope/ScopeChangeCard";
 import { QuoteForm } from "@/components/scope/QuoteForm";
 import { useScopeChanges, useSubmitQuote, useMarkScopeChangePaid } from "@/hooks/useScopeChanges";
 import { toast } from "@/hooks/use-toast";
-import { ScopeChange, Currency } from "@/types";
+import { ScopeChange } from "@/types";
 
-const STATUSES = ["all", "PENDING", "QUOTED", "APPROVED", "DECLINED", "PAID"];
+const STATUSES = [
+  { key: "all", label: "All" },
+  { key: "PENDING", label: "Pending" },
+  { key: "QUOTED", label: "Quoted" },
+  { key: "APPROVED", label: "Approved" },
+  { key: "DECLINED", label: "Declined" },
+  { key: "PAID", label: "Paid" },
+] as const;
 
 export function ScopeChangesPage() {
   const [statusFilter, setStatusFilter] = useState("all");
@@ -19,48 +28,68 @@ export function ScopeChangesPage() {
   const submitQuote = useSubmitQuote();
   const markPaid = useMarkScopeChangePaid();
 
+  const items = scopeChanges || [];
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Scope Changes</h1>
+      <div className="mb-6">
+        <h1 className="text-xl font-bold">Scope Changes</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">
+          Client-submitted change requests across all projects
+        </p>
+      </div>
 
-      <div className="flex gap-2 mb-6 flex-wrap">
+      <div className="flex gap-1.5 mb-6 flex-wrap">
         {STATUSES.map((s) => (
           <button
-            key={s}
-            onClick={() => setStatusFilter(s)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-              statusFilter === s
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
+            key={s.key}
+            onClick={() => setStatusFilter(s.key)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+              statusFilter === s.key
+                ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                : "bg-card text-muted-foreground border-border hover:bg-accent hover:text-foreground"
             }`}
           >
-            {s === "all" ? "All" : s.charAt(0) + s.slice(1).toLowerCase()}
+            {s.label}
           </button>
         ))}
       </div>
 
       {isLoading ? (
         <div className="space-y-3">
-          {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-28" />)}
+          {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)}
         </div>
-      ) : (scopeChanges || []).length === 0 ? (
-        <div className="text-center py-20 text-muted-foreground text-sm">
-          {statusFilter === "all"
-            ? "No scope change requests yet."
-            : `No ${statusFilter.toLowerCase()} scope changes.`}
-        </div>
+      ) : items.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center py-20 bg-muted/30 rounded-xl border border-dashed"
+        >
+          <GitMerge className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+          <p className="text-muted-foreground text-sm">
+            {statusFilter === "all"
+              ? "No scope change requests yet."
+              : `No ${statusFilter.toLowerCase()} scope changes.`}
+          </p>
+        </motion.div>
       ) : (
         <div className="space-y-3">
-          {(scopeChanges || []).map((sc) => (
-            <ScopeChangeCard
+          {items.map((sc, i) => (
+            <motion.div
               key={sc.id}
-              sc={sc}
-              onWriteQuote={setQuoteTarget}
-              onMarkPaid={(id) => {
-                markPaid.mutate(id);
-                toast({ title: "Marked as paid" });
-              }}
-            />
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04 }}
+            >
+              <ScopeChangeCard
+                sc={sc}
+                onWriteQuote={setQuoteTarget}
+                onMarkPaid={(id) => {
+                  markPaid.mutate(id);
+                  toast({ title: "Marked as paid" });
+                }}
+              />
+            </motion.div>
           ))}
         </div>
       )}

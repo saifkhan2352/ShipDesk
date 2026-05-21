@@ -1,7 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { GitHubEvent } from "@prisma/client";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export interface ReportContent {
   summary: string | null;
@@ -11,13 +9,26 @@ export interface ReportContent {
   generationWarning: string | null;
 }
 
+function getClient(): GoogleGenAI {
+  const apiKey = process.env.AI_INTEGRATIONS_GEMINI_API_KEY || process.env.GEMINI_API_KEY || "";
+  const baseUrl = process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
+
+  if (baseUrl) {
+    return new GoogleGenAI({
+      apiKey,
+      httpOptions: { apiVersion: "", baseUrl },
+    });
+  }
+  return new GoogleGenAI({ apiKey });
+}
+
 export async function generateWeeklyReport(opts: {
   projectName: string;
   weekStartDate: Date;
   weekEndDate: Date;
   githubEvents: GitHubEvent[];
 }): Promise<ReportContent> {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  const ai = getClient();
 
   const eventSummaries = opts.githubEvents.map((e) => {
     const payload = e.payload as Record<string, unknown>;
@@ -40,7 +51,7 @@ export async function generateWeeklyReport(opts: {
   const weekStart = opts.weekStartDate.toISOString().split("T")[0];
   const weekEnd = opts.weekEndDate.toISOString().split("T")[0];
 
-  const prompt = `You are a technical project manager writing a plain-English weekly project status report for a non-technical client.
+  const prompt = `You are a professional technical project manager writing a weekly status update for a non-technical business client.
 
 Project: ${opts.projectName}
 Week: ${weekStart} to ${weekEnd}
@@ -67,9 +78,13 @@ Rules:
   const timeout = setTimeout(() => controller.abort(), 60000);
 
   try {
-    const result = await model.generateContent(prompt);
+    const result = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: { temperature: 0.4, maxOutputTokens: 8192 },
+    });
     clearTimeout(timeout);
-    const text = result.response.text().trim();
+    const text = (result.text ?? "").trim();
 
     try {
       const parsed = JSON.parse(text) as ReportContent;
