@@ -26,7 +26,7 @@ Or from the root: `npm run dev` (uses `concurrently` to start both).
 |---|---|
 | Frontend | React 18, Vite, TypeScript, Tailwind CSS, shadcn/ui, Framer Motion |
 | Backend | Node.js, Express, TypeScript, Prisma ORM |
-| Database | Neon PostgreSQL (env var: `POSTGRES_URL`) |
+| Database | Replit PostgreSQL (env var: `DATABASE_URL`) |
 | Auth | Clerk (dev JWT for developer routes, session cookie for client portal) |
 | AI | Google Gemini 1.5 Pro (`GEMINI_API_KEY`) |
 | File storage | Cloudinary (`CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`) |
